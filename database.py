@@ -2,7 +2,7 @@ import os
 from typing import List
 
 import pandas as pd
-from dotenv import load_dotenv
+from dotenv import dotenv_values, load_dotenv
 from sqlalchemy import create_engine
 
 
@@ -11,7 +11,7 @@ def set_postgres_db_uri() -> str:
     Returns the database uri to establish the db connection
     """
 
-    host = os.getenv("POSTGRES_DB_HOST")
+    host = os.getenv("POSTGRES_DB_HOST", "localhost")
     db_name = os.getenv("POSTGRES_DB")
     port = os.getenv("POSTGRES_DB_PORT")
     user = os.getenv("POSTGRES_USER")
@@ -41,6 +41,11 @@ def create_db(txt_file_path: str, column_names: List[str], table_name: str):
 if __name__ == "__main__":
 
     load_dotenv()
+    print(os.getenv("POSTGRES_DB_HOST"))
+    print(os.getenv("POSTGRES_DB"))
+    print(os.getenv("POSTGRES_DB_PORT"))
+    print(os.getenv("POSTGRES_USER"))
+    print(os.getenv("POSTGRES_PASSWORD"))
 
     TEXT_FILEPATH = "./data/phrases.txt"
     COLUMN_NAMES = ["medical_term"]
