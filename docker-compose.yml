@@ -1,0 +1,40 @@
+version: '3.5'
+services:
+  yourmd_flask:
+    build:
+      args:
+        - PYTHON_VERSION=3.10.8-slim
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - POSTGRES_DB_HOST=db_postgres
+
+    env_file:
+      - .env
+
+    ports:
+      - 5000:5000
+    depends_on:
+      - db_postgres
+
+  db_postgres:
+    container_name: postgres-15
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+
+    environment:
+      - POSTGRES_DB_HOST=localhost
+
+    env_file:
+      - .env
+
+    volumes:
+      - flask_db:/var/lib/postgresql/data
+    hostname: postgres-15
+
+volumes:
+  flask_db:
+    driver: local
