@@ -11,7 +11,7 @@ from flaskr.preprocess import (
     PreprocessorTokenwise,
     RemoveShort,
     RemoveStopwords,
-    SpaceRemover,
+    RemoveExtraSpace,
     compose,
 )
 
@@ -32,14 +32,14 @@ def timing(f):
     return inner
 
 
-preprocessor = compose(
+preprocess = compose(
     *[
         LowerCase().run,
         PreprocessorTokenwise(
             RemoveStopwords(stopwords=["a", "an", "and", "at", "in", "on", "of", "the"])
         ).run,
         PreprocessorTokenwise(RemoveShort(min_token_length=3)).run,
-        SpaceRemover().run,
+        RemoveExtraSpace().run,
     ]
 )
 
@@ -48,7 +48,7 @@ preprocessor = compose(
 def getter():
     args = request.args
     sentence = args["text"]
-    preprocessed_text = preprocessor(sentence)
+    preprocessed_text = preprocess(sentence)
 
     all_results = [res.medical_term for res in db.session.query(MedicalTerms).all()]
 

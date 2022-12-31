@@ -5,7 +5,7 @@ from typing import Callable, List, Optional
 
 class TokenStrategy(ABC):
     @abstractmethod
-    def run(self, token):
+    def run(self, token: str):
         pass
 
 
@@ -18,14 +18,14 @@ class RemoveShort(TokenStrategy):
             return None
         return token
 
-    def is_short(self, token) -> bool:
+    def is_short(self, token: str) -> bool:
         if len(token) < self.min_token_length:
             return True
         return False
 
 
 class RemoveStopwords(TokenStrategy):
-    def __init__(self, stopwords: Optional[List] = None):
+    def __init__(self, stopwords: Optional[List[str]] = None):
         self.stopwords = stopwords
 
     def run(self, token):
@@ -35,13 +35,13 @@ class RemoveStopwords(TokenStrategy):
         return token
 
 
-class TextPreprocessor(ABC):
+class SentencePreprocessor(ABC):
     @abstractmethod
     def run(self, sentence: str):
         pass
 
 
-class PreprocessorTokenwise(TextPreprocessor):
+class PreprocessorTokenwise(SentencePreprocessor):
     def __init__(self, token_strategy: TokenStrategy):
         self.token_strategy = token_strategy
 
@@ -55,12 +55,12 @@ class PreprocessorTokenwise(TextPreprocessor):
         return " ".join(res)
 
 
-class SpaceRemover(TextPreprocessor):
+class RemoveExtraSpace(SentencePreprocessor):
     def run(self, sentence: str) -> str:
         return " ".join(sentence.split())
 
 
-class LowerCase(TextPreprocessor):
+class LowerCase(SentencePreprocessor):
     def run(self, sentence: str) -> str:
         return sentence.lower()
 

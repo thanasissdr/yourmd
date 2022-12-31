@@ -9,7 +9,7 @@ from flaskr.preprocess import (
     LowerCase,
     PreprocessorTokenwise,
     RemoveShort,
-    SpaceRemover,
+    RemoveExtraSpace,
     RemoveStopwords,
 )
 
@@ -45,7 +45,7 @@ class TestPreprocess(unittest.TestCase):
         [("a", "a"), (" ab", "ab"), ("  ab", "ab"), ("ab ", "ab"), ("abc  ", "abc")]
     )
     def test_remove_space(self, input, output):
-        self.assertEqual(SpaceRemover().run(input), output)
+        self.assertEqual(RemoveExtraSpace().run(input), output)
 
     @parameterized.expand(
         [("ab", None, "ab"), ("ab", ["ab"], "ab"), ("abc", ["ab"], None)]
