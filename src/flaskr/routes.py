@@ -1,5 +1,3 @@
-import time
-from functools import wraps
 from typing import List
 
 from flask import jsonify, request
@@ -12,34 +10,19 @@ from flaskr.preprocess import (
     RemoveShort,
     RemoveStopwords,
     RemoveExtraSpace,
-    compose,
+    Preprocessor,
 )
 
+from profilers import timing
 
-def timing(f):
-    @wraps(f)
-    def inner(*args, **kwargs):
-        start = time.perf_counter()
-        val = f(*args, **kwargs)
-        end = time.perf_counter()
-        print(
-            f"Function {f.__qualname__} finished in {end-start:.2f} seconds.",
-            flush=True,
-        )
-
-        return val
-
-    return inner
-
-
-preprocess = compose(
-    *[
-        LowerCase().run,
+preprocessor = Preprocessor(
+    [
+        LowerCase(),
         PreprocessorTokenwise(
             RemoveStopwords(stopwords=["a", "an", "and", "at", "in", "on", "of", "the"])
-        ).run,
-        PreprocessorTokenwise(RemoveShort(min_token_length=3)).run,
-        RemoveExtraSpace().run,
+        ),
+        PreprocessorTokenwise(RemoveShort(min_token_length=3)),
+        RemoveExtraSpace(),
     ]
 )
 
@@ -48,7 +31,7 @@ preprocess = compose(
 def getter():
     args = request.args
     sentence = args["text"]
-    preprocessed_text = preprocess(sentence)
+    preprocessed_text = preprocessor.run(sentence)
 
     all_results = [res.medical_term for res in db.session.query(MedicalTerms).all()]
 

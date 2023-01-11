@@ -67,3 +67,14 @@ class LowerCase(SentencePreprocessor):
 
 def compose(*functions: Callable):
     return reduce(lambda f, g: lambda x: g(f(x)), functions)
+
+
+class Preprocessor:
+    def __init__(self, preprocessing_steps: List[SentencePreprocessor]):
+        self.preprocessing_steps = preprocessing_steps
+
+    def run(self, data: str):
+        for preprocessing_step in self.preprocessing_steps:
+            data = preprocessing_step.run(data)
+
+        return data
