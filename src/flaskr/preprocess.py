@@ -13,13 +13,14 @@ class RemoveShort(TokenStrategy):
     def __init__(self, min_token_length: int = 1):
         self.min_token_length = min_token_length
 
-    def run(self, token: str):
-        if self.is_short(token):
+    def run(self, token: str) -> None | str:
+        if self.is_short(token, self.min_token_length):
             return None
         return token
 
-    def is_short(self, token: str) -> bool:
-        if len(token) < self.min_token_length:
+    @staticmethod
+    def is_short(token: str, min_token_length: int) -> bool:
+        if len(token) < min_token_length:
             return True
         return False
 
@@ -28,7 +29,7 @@ class RemoveStopwords(TokenStrategy):
     def __init__(self, stopwords: Optional[List[str]] = None):
         self.stopwords = stopwords
 
-    def run(self, token):
+    def run(self, token: str) -> None | str:
         if self.stopwords:
             return token if token not in self.stopwords else None
 
